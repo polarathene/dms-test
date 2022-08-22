@@ -10,8 +10,8 @@ ARG FAIL2BAN_GPG_PUBLIC_KEY_ID=0x683BF1BEBD0A882C
 ARG FAIL2BAN_GPG_PUBLIC_KEY_SERVER=hkps://keyserver.ubuntu.com
 ARG FAIL2BAN_GPG_FINGERPRINT="8738 559E 26F6 71DF 9E2C  6D9E 683B F1BE BD0A 882C"
 
-LABEL org.opencontainers.image.version=${VCS_VER}
-LABEL org.opencontainers.image.revision=${VCS_REF}
+# LABEL org.opencontainers.image.version=${VCS_VER}
+# LABEL org.opencontainers.image.revision=${VCS_REF}
 LABEL org.opencontainers.image.title="docker-mailserver"
 LABEL org.opencontainers.image.vendor="The Docker Mailserver Organization"
 LABEL org.opencontainers.image.authors="The Docker Mailserver Organization on GitHub"

@@ -176,8 +176,9 @@ jobs:
       - name: 'Run tests'
         env:
           TERM: linux
+          CI: false
         run: |
           NAME=mailserver-testing:ci
           make generate-accounts
-          test/bats/bin/bats --report-formatter cat --pretty test/mail_time.bats
+          test/bats/bin/bats test/mail_time.bats
           cat report.log

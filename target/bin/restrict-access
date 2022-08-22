@@ -1,0 +1,66 @@
+#! /bin/bash
+
+# shellcheck source=../scripts/helpers/index.sh
+source /usr/local/bin/helpers/index.sh
+
+MODE="${1}"
+USER="${3}"
+
+function __usage { echo "Usage: ${0} <add|del|list> <send|receive> [<email@domain.com>]" ; }
+
+[[ -z ${MODE} ]] && _exit_with_error 'Missing parameters: <add|del|list> <send|receive> [<email@domain.com>]'
+
+case "${2}" in
+  ( 'send' )
+    DATABASE="/tmp/docker-mailserver/postfix-send-access.cf"
+    ;;
+
+  ( 'receive' )
+    DATABASE="/tmp/docker-mailserver/postfix-receive-access.cf"
+    ;;
+
+  ( * )
+    __usage
+    _exit_with_error "Missing parameters: specify 'send' or 'receive'"
+    ;;
+
+esac
+
+if [[ -z ${USER} ]] && [[ ${MODE} != list ]]
+then
+  read -r -p 'User(user@domain.com): ' USER
+  echo
+  [[ -z ${USER} ]] && _exit_with_error 'User must not be empty'
+fi
+
+case "${MODE}" in
+  ( 'add' )
+    grep -qi "^$(_escape "${USER}")" "${DATABASE}" 2>/dev/null && _exit_with_error "User '${USER}' already denied to ${2} mails"
+
+    if [[ ! -f ${DATABASE} ]]
+    then
+      # shellcheck disable=SC2015
+      [[ ${DATABASE} = *"send"* ]] && \
+          sed -i 's|smtpd_sender_restrictions =|smtpd_sender_restrictions = check_sender_access texthash:/tmp/docker-mailserver/postfix-send-access.cf,|' /etc/postfix/main.cf \
+        || sed -i 's|smtpd_recipient_restrictions =|smtpd_recipient_restrictions = check_recipient_access texthash:/tmp/docker-mailserver/postfix-receive-access.cf,|' /etc/postfix/main.cf
+
+      service postfix reload >/dev/null
+    fi
+
+    echo -e "${USER} \t\t REJECT" >>"${DATABASE}"
+    ;;
+
+  ( 'del' )
+    sed -ie "/^$(_escape "${USER}")/d" "${DATABASE}" 2>/dev/null || _exit_with_error "User '${USER}' not found."
+    ;;
+
+  ( 'list' )
+    grep "REJECT" "${DATABASE}" 2>/dev/null || _log 'info' "Everyone is allowed to ${2} mails"
+    ;;
+
+  ( * )
+    __usage
+    _exit_with_error "Missing mode: specify 'add', 'del' or 'list'"
+    ;;
+
+esac

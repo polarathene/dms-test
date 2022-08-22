@@ -53,10 +53,10 @@ jobs:
         uses: actions/cache@v3
         with:
           path: /tmp/.buildx-cache
-          key: cache-buildxx-${{ steps.derive-image-cache-key.outputs.digest }}
+          key: cache-buildxxx-${{ steps.derive-image-cache-key.outputs.digest }}
           # No exact cache-hit, look for a similar cache key and use that instead:
           restore-keys: |
-            cache-buildxx-
+            cache-buildxxx-
 
       # Support ARM64 builds on AMD64 host:
       - name: 'Set up QEMU'
@@ -85,6 +85,7 @@ jobs:
           # https://github.com/docker/buildx/blob/master/docs/reference/buildx_build.md#cache-from
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
+          outputs: type=cacheonly
           # Export AMD64 image for upload-artifact step, allowing other jobs to use it:
           # https://github.com/docker/buildx/blob/master/docs/reference/buildx_build.md#docker
 #          outputs: type=docker,dest=/tmp/dms-docker-img.tar
@@ -141,10 +142,10 @@ jobs:
         uses: actions/cache@v3
         with:
           path: /tmp/.buildx-cache
-          key: cache-buildxx-${{ needs.job-build-image.outputs.image-build-key }}
+          key: cache-buildxxx-${{ needs.job-build-image.outputs.image-build-key }}
           # No exact cache-hit, look for a similar cache key and use that instead:
           restore-keys: |
-            cache-buildxx-
+            cache-buildxxx-
 
       - name: 'Set up Docker Buildx'
         uses: docker/setup-buildx-action@v2.0.0
@@ -167,6 +168,8 @@ jobs:
           load: true
 
       - name: 'Run tests'
+        env:
+          CI: true
         run: |
           export TERM=xterm-256color
           NAME=mailserver-testing:ci

@@ -99,10 +99,14 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: dms-build-${{ steps.derive-image-cache-key.digest }}
-          path: dms-docker-img.tar
+          path: /tmp/dms-docker-img.tar
           # Artifact limits are unclear for open-source projects,
           # Each image is roughly 500MB+, if necessary reduce retention period:
           #retention-days: 1
+      - name: 'List sizes'
+        run: |
+          du -bch /tmp/dms-docker-img.tar
+          du -bch /tmp/.buildx-cache/*
 
   job-run-tests:
     name: 'Run Test Suite'

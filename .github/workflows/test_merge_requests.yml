@@ -112,7 +112,7 @@ jobs:
       - name: 'List sizes'
         run: |
           # 330MB for both AMD64 locations
-          du -bch /tmp/dms-docker-img.tar
+          #du -bch /tmp/dms-docker-img.tar
           du -bch /tmp/.buildx-cache/*
 
   job-run-tests:

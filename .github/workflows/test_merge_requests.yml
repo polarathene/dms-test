@@ -53,10 +53,10 @@ jobs:
         uses: actions/cache@v3
         with:
           path: /tmp/.buildx-cache
-          key: cache-buildxxx-${{ steps.derive-image-cache-key.outputs.digest }}
+          key: cache-buildxyz-${{ steps.derive-image-cache-key.outputs.digest }}
           # No exact cache-hit, look for a similar cache key and use that instead:
           restore-keys: |
-            cache-buildxxx-
+            cache-buildxyz-
 
       # Support ARM64 builds on AMD64 host:
       - name: 'Set up QEMU'
@@ -144,14 +144,16 @@ jobs:
         uses: actions/cache@v3
         with:
           path: /tmp/.buildx-cache
-          key: cache-buildxxx-${{ needs.job-build-image.outputs.image-build-key }}
+          key: cache-buildxyz-${{ needs.job-build-image.outputs.image-build-key }}
           # No exact cache-hit, look for a similar cache key and use that instead:
           restore-keys: |
-            cache-buildxxx-
+            cache-buildxyz-
 
       - name: 'Set up Docker Buildx'
         uses: docker/setup-buildx-action@v2.0.0
         id: buildx
+        with:
+          buildkitd-flags: --debug
 
       # 30 sec import time (+2 cache restore, +3 buildx setup), slightly longer than download-artifact + load image, but better than 2 minute upload hit
       - name: 'Build images locally'
@@ -171,8 +173,7 @@ jobs:
 
       - name: 'Run tests'
         env:
-          CI: false
+          TERM: linux
         run: |
-          export TERM=xterm-256color
           NAME=mailserver-testing:ci
           bash -c 'make generate-accounts tests'

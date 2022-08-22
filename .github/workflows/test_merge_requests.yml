@@ -53,10 +53,10 @@ jobs:
         uses: actions/cache@v3
         with:
           path: /tmp/.buildx-cache
-          key: cache-buildxyz-${{ steps.derive-image-cache-key.outputs.digest }}
+          key: cache-buildxz-${{ steps.derive-image-cache-key.outputs.digest }}
           # No exact cache-hit, look for a similar cache key and use that instead:
           restore-keys: |
-            cache-buildxyz-
+            cache-buildxz-
 
       # Support ARM64 builds on AMD64 host:
       - name: 'Set up QEMU'
@@ -77,9 +77,9 @@ jobs:
         uses: docker/build-push-action@v3.1.1
         with:
           context: .
-          build-args: |
-            VCS_REF=${{ github.sha }}
-            VCS_VER=${{ github.ref }}
+          #build-args: |
+            #VCS_REF=${{ github.sha }}
+            #VCS_VER=${{ github.ref }}
           tags: mailserver-testing:ci
           # Build for AMD64 (runs against test suite) and ARM64 (we only test a successful build):
           platforms: linux/amd64
@@ -114,15 +114,12 @@ jobs:
           # Each image is roughly 500MB+ (330MB on CI), if necessary reduce retention period:
           #retention-days: 1
       - name: 'List sizes'
+        env:
+          TERM: linux
         run: |
           # 330MB for both AMD64 locations
           #du -bch /tmp/dms-docker-img.tar
           du -bch /tmp/.buildx-cache/*
-
-          ulimit -Sn
-          ulimit -Hn
-          docker run --rm -it alpine bash -c 'ulimit -Sn && ulimit -Hn'
-
 
   job-run-tests:
     name: 'Run Test Suite'
@@ -149,10 +146,10 @@ jobs:
         uses: actions/cache@v3
         with:
           path: /tmp/.buildx-cache
-          key: cache-buildxyz-${{ needs.job-build-image.outputs.image-build-key }}
+          key: cache-buildxz-${{ needs.job-build-image.outputs.image-build-key }}
           # No exact cache-hit, look for a similar cache key and use that instead:
           restore-keys: |
-            cache-buildxyz-
+            cache-buildxz-
 
       - name: 'Set up Docker Buildx'
         uses: docker/setup-buildx-action@v2.0.0
@@ -165,9 +162,9 @@ jobs:
         uses: docker/build-push-action@v3.1.1
         with:
           context: .
-          build-args: |
-            VCS_REF=${{ github.sha }}
-            VCS_VER=${{ github.ref }}
+          #build-args: |
+            #VCS_REF=${{ github.sha }}
+            #VCS_VER=${{ github.ref }}
           tags: mailserver-testing:ci
           # Build for AMD64 (runs against test suite) and ARM64 (we only test a successful build):
           platforms: linux/amd64
@@ -181,4 +178,6 @@ jobs:
           TERM: linux
         run: |
           NAME=mailserver-testing:ci
-          bash -c 'make generate-accounts tests'
+          make generate-accounts
+          test/bats/bin/bats --report-formatter cat --pretty test/mail_time.bats
+          cat report.log

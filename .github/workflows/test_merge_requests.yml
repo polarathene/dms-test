@@ -119,6 +119,11 @@ jobs:
           #du -bch /tmp/dms-docker-img.tar
           du -bch /tmp/.buildx-cache/*
 
+          ulimit -Sn
+          ulimit -Hn
+          docker run --rm -it alpine bash -c 'ulimit -Sn && ulimit -Hn'
+
+
   job-run-tests:
     name: 'Run Test Suite'
     needs: job-build-image

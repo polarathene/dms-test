@@ -141,7 +141,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: /tmp/.buildx-cache
-          key: cache-buildxx-${{ steps.derive-image-cache-key.outputs.digest }}
+          key: cache-buildxx-${{ needs.job-build-image.outputs.image-build-key }}
           # No exact cache-hit, look for a similar cache key and use that instead:
           restore-keys: |
             cache-buildxx-

@@ -181,4 +181,3 @@ jobs:
           NAME=mailserver-testing:ci
           make generate-accounts
           test/bats/bin/bats test/mail_time.bats
-          cat report.log

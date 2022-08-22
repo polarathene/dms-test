@@ -169,7 +169,7 @@ jobs:
 
       - name: 'Run tests'
         env:
-          CI: true
+          CI: false
         run: |
           export TERM=xterm-256color
           NAME=mailserver-testing:ci

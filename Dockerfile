@@ -1,3 +1,6 @@
+ARG VCS_VER
+ARG VCS_REF
+
 FROM docker.io/debian:11-slim
 
 ARG DEBIAN_FRONTEND=noninteractive
@@ -297,6 +300,3 @@ EXPOSE 25 587 143 465 993 110 995 4190
 ENTRYPOINT ["/usr/bin/dumb-init", "--"]
 
 CMD ["supervisord", "-c", "/etc/supervisor/supervisord.conf"]
-
-ARG VCS_VER
-ARG VCS_REF

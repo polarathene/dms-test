@@ -1,7 +1,5 @@
 FROM docker.io/debian:11-slim
 
-ARG VCS_VER
-ARG VCS_REF
 ARG DEBIAN_FRONTEND=noninteractive
 
 ARG FAIL2BAN_DEB_URL=https://github.com/fail2ban/fail2ban/releases/download/0.11.2/fail2ban_0.11.2-1.upstream1_all.deb
@@ -299,3 +297,6 @@ EXPOSE 25 587 143 465 993 110 995 4190
 ENTRYPOINT ["/usr/bin/dumb-init", "--"]
 
 CMD ["supervisord", "-c", "/etc/supervisor/supervisord.conf"]
+
+ARG VCS_VER
+ARG VCS_REF

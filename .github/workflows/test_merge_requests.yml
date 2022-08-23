@@ -53,16 +53,14 @@ jobs:
         uses: actions/cache@v3
         with:
           path: /tmp/.buildx-cache
-          key: zcache-buildx-${{ steps.derive-image-cache-key.outputs.digest }}
+          key: zzcache-buildx-${{ steps.derive-image-cache-key.outputs.digest }}
           # No exact cache-hit, look for a similar cache key and use that instead:
           restore-keys: |
-            zcache-buildx-
+            zzcache-buildx-
 
       # Support ARM64 builds on AMD64 host:
       - name: 'Set up QEMU'
         uses: docker/setup-qemu-action@v2.0.0
-        with:
-          platforms: arm64
 
       - name: 'Set up Docker Buildx'
         uses: docker/setup-buildx-action@v2.0.0
@@ -80,7 +78,7 @@ jobs:
             VCS_VER=${{ github.ref }}
           tags: mailserver-testing:ci
           # Build for AMD64 (runs against test suite) and ARM64 (we only test a successful build):
-          platforms: linux/arm64
+          platforms: linux/arm/v7
           # Paired with steps `actions/cache` and `Replace cache`:
           # https://github.com/docker/buildx/blob/master/docs/reference/buildx_build.md#cache-from
           cache-from: type=local,src=/tmp/.buildx-cache
@@ -142,10 +140,10 @@ jobs:
         uses: actions/cache@v3
         with:
           path: /tmp/.buildx-cache
-          key: zcache-buildx-${{ needs.job-build-image.outputs.image-build-key }}
+          key: cache-buildx-${{ needs.job-build-image.outputs.image-build-key }}
           # No exact cache-hit, look for a similar cache key and use that instead:
           restore-keys: |
-            zcache-buildx-
+            cache-buildx-
 
       - name: 'Set up Docker Buildx'
         uses: docker/setup-buildx-action@v2.0.0

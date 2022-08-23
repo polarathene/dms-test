@@ -1,3 +1,6 @@
+ARG VCS_VER
+ARG VCS_REF
+
 FROM docker.io/debian:11-slim
 
 ARG DEBIAN_FRONTEND=noninteractive
@@ -8,8 +11,6 @@ ARG FAIL2BAN_GPG_PUBLIC_KEY_ID=0x683BF1BEBD0A882C
 ARG FAIL2BAN_GPG_PUBLIC_KEY_SERVER=hkps://keyserver.ubuntu.com
 ARG FAIL2BAN_GPG_FINGERPRINT="8738 559E 26F6 71DF 9E2C  6D9E 683B F1BE BD0A 882C"
 
-# LABEL org.opencontainers.image.version=${VCS_VER}
-# LABEL org.opencontainers.image.revision=${VCS_REF}
 LABEL org.opencontainers.image.title="docker-mailserver"
 LABEL org.opencontainers.image.vendor="The Docker Mailserver Organization"
 LABEL org.opencontainers.image.authors="The Docker Mailserver Organization on GitHub"
@@ -87,7 +88,8 @@ COPY ./target/scripts/helpers/log.sh /usr/local/bin/helpers/log.sh
 COPY ./target/bin/sedfile /usr/local/bin/sedfile
 
 RUN chmod +x /usr/local/bin/sedfile
-
+LABEL org.opencontainers.image.version=${VCS_VER}
+LABEL org.opencontainers.image.revision=${VCS_REF}
 # -----------------------------------------------
 # --- ClamAV & FeshClam -------------------------
 # -----------------------------------------------
@@ -100,8 +102,7 @@ RUN \
   mkdir /var/run/clamav && \
   chown -R clamav:root /var/run/clamav && \
   rm -rf /var/log/clamav/
-ARG VCS_VER
-ARG VCS_REF
+
 # -----------------------------------------------
 # --- Dovecot -----------------------------------
 # -----------------------------------------------

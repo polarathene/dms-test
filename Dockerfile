@@ -1,6 +1,3 @@
-ARG VCS_VER
-ARG VCS_REF
-
 FROM docker.io/debian:11-slim
 
 ARG DEBIAN_FRONTEND=noninteractive
@@ -103,7 +100,8 @@ RUN \
   mkdir /var/run/clamav && \
   chown -R clamav:root /var/run/clamav && \
   rm -rf /var/log/clamav/
-
+ARG VCS_VER
+ARG VCS_REF
 # -----------------------------------------------
 # --- Dovecot -----------------------------------
 # -----------------------------------------------

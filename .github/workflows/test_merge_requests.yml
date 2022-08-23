@@ -53,10 +53,10 @@ jobs:
         uses: actions/cache@v3
         with:
           path: /tmp/.buildx-cache
-          key: zzcache-buildx-${{ steps.derive-image-cache-key.outputs.digest }}
+          key: zzzcache-buildx-${{ steps.derive-image-cache-key.outputs.digest }}
           # No exact cache-hit, look for a similar cache key and use that instead:
           restore-keys: |
-            zzcache-buildx-
+            zzzcache-buildx-
 
       # Support ARM64 builds on AMD64 host:
       - name: 'Set up QEMU'
@@ -78,7 +78,7 @@ jobs:
             VCS_VER=${{ github.ref }}
           tags: mailserver-testing:ci
           # Build for AMD64 (runs against test suite) and ARM64 (we only test a successful build):
-          platforms: linux/arm64,linux/arm/v7
+          platforms: linux/amd64,linux/arm64,linux/arm/v7
           # Paired with steps `actions/cache` and `Replace cache`:
           # https://github.com/docker/buildx/blob/master/docs/reference/buildx_build.md#cache-from
           cache-from: type=local,src=/tmp/.buildx-cache
@@ -140,14 +140,10 @@ jobs:
         uses: actions/cache@v3
         with:
           path: /tmp/.buildx-cache
-          key: cache-buildx-${{ needs.job-build-image.outputs.image-build-key }}
+          key: zzzcache-buildx-${{ needs.job-build-image.outputs.image-build-key }}
           # No exact cache-hit, look for a similar cache key and use that instead:
           restore-keys: |
-            cache-buildx-
-
-      - name: 'Set up Docker Buildx'
-        uses: docker/setup-buildx-action@v2.0.0
-        id: buildx
+            zzzcache-buildx-
 
       # 30 sec import time (+2 cache restore, +3 buildx setup), slightly longer than download-artifact + load image, but better than 2 minute upload hit
       - name: 'Build images locally'

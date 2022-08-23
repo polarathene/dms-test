@@ -42,7 +42,7 @@ setup_file() {
 
   wait_for_finished_setup_in_container mail
 
-  # generate accounts after container has been started
+  # generate accounts after container has been startedxxx
   docker run --rm -e MAIL_USER=added@localhost.localdomain -e MAIL_PASS=mypassword -t "${NAME}" /bin/sh -c 'echo "${MAIL_USER}|$(doveadm pw -s SHA512-CRYPT -u ${MAIL_USER} -p ${MAIL_PASS})"' >> "${PRIVATE_CONFIG}/postfix-accounts.cf"
   docker exec mail addmailuser pass@localhost.localdomain 'may be \a `p^a.*ssword'
 
@@ -52,10 +52,10 @@ setup_file() {
   # this relies on the checksum file beeing updated after all changes have been applied
   wait_for_changes_to_be_detected_in_container mail
 
-  wait_for_smtp_port_in_container mail
-
   # wait for ClamAV to be fully setup or we will get errors on the log
   repeat_in_container_until_success_or_timeout 60 mail test -e /var/run/clamav/clamd.ctl
+
+  wait_for_smtp_port_in_container mail
 
   # sending test mails
   docker exec mail /bin/sh -c "nc 0.0.0.0 25 < /tmp/docker-mailserver-test/email-templates/amavis-spam.txt"

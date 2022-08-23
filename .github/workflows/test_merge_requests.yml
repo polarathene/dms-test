@@ -80,7 +80,7 @@ jobs:
             VCS_VER=${{ github.ref }}
           tags: mailserver-testing:ci
           # Build for AMD64 (runs against test suite) and ARM64 (we only test a successful build):
-          platforms: linux/amd64
+          platforms: linux/amd64,linux/arm64
           # Paired with steps `actions/cache` and `Replace cache`:
           # https://github.com/docker/buildx/blob/master/docs/reference/buildx_build.md#cache-from
           cache-from: type=local,src=/tmp/.buildx-cache
